@@ -1,18 +1,27 @@
-import { Column, Entity } from "typeorm";
+import { Cat } from "src/cats/entities/cat.entity";
+import { Owner } from "src/owner/entities/owner.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Adoption {
 
-    @Column({ primary: true, generated: true })
+    @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    catId: number;
+    @ManyToOne(() => Cat, (cat) => cat.adoptions, {
+        eager: true,
+    })
+    cat: Cat;
     
-    @Column()
-    ownerId: number;
+    @ManyToOne(() => Owner, (owner) => owner.adoptions, {
+        eager: true,
+    })
+    owner: Owner;
 
     @Column()
     adoptionDate: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deletedAt: Date;
 
 }

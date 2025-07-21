@@ -1,4 +1,5 @@
-import { Column, DeleteDateColumn, Entity } from "typeorm";
+import { Adoption } from "src/adoption/entities/adoption.entity";
+import { Column, DeleteDateColumn, Entity, OneToMany } from "typeorm";
 
 @Entity()
 export class Owner {
@@ -16,12 +17,15 @@ export class Owner {
     email: string;
 
     @Column()
-    phone: number ;
+    phone: string;
 
     @DeleteDateColumn()
     deletedAt: Date;
 
     @Column({ nullable: true })
     address?: string;
+
+    @OneToMany(() => Adoption, (adoption) => adoption.owner)
+    adoptions: Adoption[];
 
 }

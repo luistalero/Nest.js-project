@@ -14,14 +14,15 @@ export class CreateOwnerDto {
     @MinLength(1)
     email: string;
 
-    @IsInt()
-    @IsPositive()
-    @MaxLength(10)
-    phone: number;
+    @IsString()
+    @MaxLength(15)
+    phone: string;
 
     @IsString()
     @IsOptional()
     @MaxLength(255)
     address?: string;
+
+
 
 }

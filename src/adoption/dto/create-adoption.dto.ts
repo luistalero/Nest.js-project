@@ -1,4 +1,5 @@
-import { IsInt, IsPositive, IsDate } from "class-validator";
+import { Type } from "class-transformer";
+import { IsInt, IsPositive, IsDate, IsNotEmpty } from "class-validator";
 
 export class CreateAdoptionDto {
 
@@ -10,6 +11,8 @@ export class CreateAdoptionDto {
     @IsPositive()
     ownerId: number;
 
+    @IsNotEmpty()
+    @Type(() => Date)
     @IsDate()
     adoptionDate: Date;
 

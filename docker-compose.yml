@@ -1,15 +1,75 @@
-version: "3.8"
+version: '3.8'
+
 services:
-  mysql:
+  mysql_db:
     image: mariadb:11.8
     container_name: mysql_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_crud
-      MYSQL_USER: user_crud
-      MYSQL_PASSWORD: root
-    volumes:
-      - ./mysql:/var/lib/mysql
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: db_crud
+      MARIADB_USER: user_crud
+      MARIADB_PASSWORD: root
     ports:
-      - "3307:3306"
+      - "3307:3306" 
+    volumes:
+      - ./mysql_data:/var/lib/mysql 
+    networks:
+      - app_network
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$MARIADB_USER", "-p$$MARIADB_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s 
+  app_seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    container_name: nestjs_seeder
+    environment:
+      DB_HOST_INTERNAL: mysql_db
+      DB_PORT_INTERNAL: 3306
+      DB_USERNAME: user_crud
+      DB_PASSWORD: root
+      DB_DATABASE: db_crud
+    depends_on:
+      mysql_db:
+        condition: service_healthy 
+    command: ["npm", "run", "db:seed"] 
+    networks:
+      - app_network
+
+  nestjs_app: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nestjs_backend 
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules 
+    environment:
+      DATABASE_HOST: mysql_db 
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: user_crud
+      DATABASE_PASSWORD: root
+      DATABASE_NAME: db_crud
+      PORT: 3000
+    depends_on:
+      app_seeder:
+        condition: service_completed_successfully 
+      mysql_db:
+        condition: service_healthy 
+    networks:
+      - app_network
+
+volumes:
+  mysql_data: 
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

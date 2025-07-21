@@ -7,14 +7,14 @@ import { Breed } from './entities/breed.entity';
 
 @Injectable()
 export class BreedsService {
-
-  @InjectRepository(Breed)
-  private readonly breedRepository: Repository<Breed>;
-
-  constructor() { }
+  constructor(
+    @InjectRepository(Breed)
+    private readonly breedRepository: Repository<Breed>,
+  ) {}
 
   async create(createBreedDto: CreateBreedDto) {
-    return await this.breedRepository.save(createBreedDto);
+    const breed = this.breedRepository.create(createBreedDto);
+    return await this.breedRepository.save(breed);
   }
 
   async findAll() {

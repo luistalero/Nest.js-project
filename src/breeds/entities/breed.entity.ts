@@ -1,12 +1,23 @@
-import { Column, Entity } from "typeorm";
+import { Cat } from "src/cats/entities/cat.entity";
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity()
 export class Breed {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ primary: true, generated: true })
-    id: number;
+  @Column({ unique: true })
+  name: string;
 
-    @Column()
-    name: string;
-    
+  @OneToMany(() => Cat, (cat) => cat.breed)
+  cats: Cat[];
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
