@@ -20,7 +20,7 @@ export class AdoptionSeeder implements Seeder {
             return;
         }
 
-        const numberOfAdoptionsToCreate = Math.min(cats.length, owners.length, 30); 
+        const numberOfAdoptionsToCreate = Math.min(cats.length, owners.length, 10); 
         for (let i = 0; i < numberOfAdoptionsToCreate; i++) {
             const randomCat = cats[Math.floor(Math.random() * cats.length)];
             const randomOwner = owners[Math.floor(Math.random() * owners.length)];

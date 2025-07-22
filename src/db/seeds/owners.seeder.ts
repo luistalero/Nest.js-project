@@ -8,7 +8,7 @@ export class OwnerSeeder implements Seeder {
     async run(dataSource: DataSource): Promise<void> {
         const repository = dataSource.getRepository(Owner);
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 25; i++) {
             const firstName = faker.person.firstName();
             const lastName = faker.person.lastName();
             const email = faker.internet.email({ firstName, lastName }).toLowerCase();

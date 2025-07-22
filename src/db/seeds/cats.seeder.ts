@@ -16,7 +16,7 @@ export class CatSeeder implements Seeder {
             return;
         }
 
-        for (let i = 0; i < 100; i++) { 
+        for (let i = 0; i < 30; i++) { 
             const randomBreed = breeds[Math.floor(Math.random() * breeds.length)];
             const catData = {
                 name: faker.animal.cat(),

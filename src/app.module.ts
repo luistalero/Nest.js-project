@@ -10,7 +10,7 @@ import { AdoptionModule } from './adoption/adoption.module';
     CatsModule,
     TypeOrmModule.forRoot({
       type: 'mariadb',
-      host: process.env.DB_HOST || 'mysql',
+      host: process.env.DB_HOST || 'mysql_db',
       port:  3306,
       username: process.env.DB_USERNAME || 'user_crud',
       password: process.env.DB_PASSWORD || 'root',

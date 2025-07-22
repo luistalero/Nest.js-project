@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/bin/cli.js seed -d ./ormconfig.ts"
+    "db:seed": "npx typeorm-extension seed:run -d ./dist/ormconfig.js",
+    "docker:reset-db": "docker-compose down --volumes && docker-compose up --build -d mysql_db app_seeder && docker exec -it nestjs_seeder npm run db:seed && docker-compose up -d nestjs_backend",
+    "docker:clean": "docker-compose down --volumes"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

@@ -1,5 +1,5 @@
-# Usa una imagen base de Node.js
-FROM node:20-alpine
+# Usa una imagen base de Node.js para la fase de build
+FROM node:20-alpine AS build
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
@@ -7,15 +7,24 @@ WORKDIR /app
 # Copia package.json y package-lock.json para instalar las dependencias
 COPY package*.json ./
 
-# Instala las dependencias (producción para la imagen, desarrollo para el volumen)
 RUN npm install
 
 # Copia todo el código fuente de tu aplicación al contenedor
 COPY . .
 
-# Expone el puerto en el que tu aplicación NestJS va a escuchar (3000 por defecto)
-EXPOSE 3000
+# Compila la aplicación NestJS
+# Esto es crucial para que `ts-node` no tenga que compilar en tiempo de ejecución cada vez
+RUN npm run build
 
-# Comando para iniciar la aplicación en modo de desarrollo con "watch"
-# Esto es importante para que los cambios de código se reflejen
-CMD [ "npm", "run", "start:dev" ]
+# --- Opcional: Fase de Producción (para una imagen más pequeña, no estrictamente necesaria para desarrollo con docker-compose up) ---
+# FROM node:20-alpine AS production
+
+# WORKDIR /app
+
+# COPY --from=build /app/package*.json ./
+# COPY --from=build /app/node_modules ./node_modules
+# COPY --from=build /app/dist ./dist
+
+# EXPOSE 3000
+
+# CMD [ "node", "dist/main" ]
