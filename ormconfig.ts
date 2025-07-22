@@ -22,11 +22,11 @@ const options: DataSourceOptions & SeederOptions = {
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_DATABASE,
-  entities: ['dist/**/*.entity.ts'], 
+  entities: ['dist/**/*.entity.js'], 
   synchronize: true,
   logging: ['query', 'error'], 
 
-  seeds: ['dist/src/db/seeds/*.seeder.js'], //[MainSeeder], 
+  seeds: ['dist/src/db/seeds/*.seeder.js'], 
   factories: [], 
 };
 

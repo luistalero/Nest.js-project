@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mysql_db:
     image: mariadb:11.8
@@ -13,29 +11,11 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MARIADB_USER", "-p$$MARIADB_ROOT_PASSWORD"]
+      test: ["CMD-SHELL", "ps aux | grep mariadbd | grep -v grep || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 60s
-
-  app_seeder:
-    build:
-      context: .
-      dockerfile: Dockerfile 
-    container_name: nestjs_seeder
-    env_file:
-      - .env
-    depends_on:
-        - mysql_db
-    networks:
-      - app_network
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: ["/bin/sh", "-c", "sleep 15 && npm run db:seed && tail -f /dev/null"]
-    stdin_open: true 
-    tty: true  
+      start_period: 90s
 
   nestjs_app:
     build:
@@ -44,22 +24,33 @@ services:
     container_name: nestjs_backend
     restart: always
     ports:
-      - "3000:3000"
+      - "${APP_PORT}:${APP_PORT}" 
     volumes:
       - .:/app 
       - /app/node_modules
-    environment:
-      PORT: 3000
     env_file:
       - .env
     depends_on:
-      app_seeder:
-        condition: service_completed_successfully 
       mysql_db:
         condition: service_healthy 
     command: ["npm", "run", "start:dev"] 
     networks:
       - app_network
+  app_seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    container_name: nestjs_seeder
+    env_file:
+      - .env
+    depends_on:
+      nestjs_app:
+        condition: service_started
+      mysql_db:
+        condition: service_healthy
+    networks:
+      - app_network
+    command: ["/bin/sh", "-c", "sleep 10 && npm run db:seed && echo 'Seeding completado y contenedor de seeder saliendo.'"]
 
 volumes:
   mysql_data:

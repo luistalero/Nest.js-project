@@ -1,5 +1,5 @@
 dev:
-	docker-compose up --build  
+	docker-compose up --build -d
 
 start:
 	npm run docker:reset-db
